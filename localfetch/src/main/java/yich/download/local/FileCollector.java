@@ -168,46 +168,20 @@ public class FileCollector implements Callable<List<Path>> {
     }
 
     public int cleanSource(boolean all) {
-//        int[] count = {0};
         List<List<String>> dst_list = new ArrayList<>();
 
         if (!all) {
             dst_list.add(getCopiedFiles());
         }
 
-        int num = 0;
-        try {
-            System.out.println("%% Start Cleaner");
-            FileCleaner cleaner = new FileCleaner();
-            cleaner.addPredicate("Files::isRegularFile", Files::isRegularFile)
-                    .addPredicate("path -> isFormatRight(path)", path -> isFormatRight(path))
-                    .addPredicate("...", path -> all || dst_list.get(0).contains(creationTime(path) + ""));
-            num = cleaner.clean(src);
-            System.out.println("%% End Cleaning");
+        //System.out.println("%% Start Cleaner");
+        FileCleaner cleaner = new FileCleaner();
+        cleaner.addPredicate(Files::isRegularFile)
+                .addPredicate(path -> isFormatRight(path))
+                .addPredicate(path -> all || dst_list.get(0).contains(creationTime(path) + ""));
+        int num = cleaner.clean(src);
+        //System.out.println("%% End Cleaning");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-//        try (Stream<Path> paths = Files.walk(src)) {
-//            paths
-//                    .filter(Files::isRegularFile)
-//                    .filter(path -> isFormatRight(path))
-//                    .filter(path -> all || dst_list.get(0).contains(creationTime(path) + ""))
-//                    .forEach(path -> {
-//                        try {
-//                            Files.deleteIfExists(path);
-//                            count[0]++;
-//                        } catch (IOException e) {
-//                            logger.info(e.getMessage());
-//                        }
-//                    });
-//
-//        } catch (Exception e) {
-//            logger.info(e.getMessage());
-//        }
-
-//        return count[0];
         return num;
     }
 
@@ -236,7 +210,7 @@ public class FileCollector implements Callable<List<Path>> {
             }
 
         }
-        System.out.println("%% delSrc: " + delSrc);
+        //System.out.println("%% delSrc: " + delSrc);
         if (delSrc) {
             int num = cleanSource(false);
             System.out.println("** Collector: " + num + " Copied Files has been Cleaned.");

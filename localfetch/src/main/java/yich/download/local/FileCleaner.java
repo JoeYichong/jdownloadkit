@@ -20,7 +20,7 @@ public class FileCleaner extends PredicateNode<Path> implements Callable<Integer
     }
 
     public FileCleaner() {
-        super(StrUtil.randomAlphaNumeric(5));
+        super("FileCleaner@" +StrUtil.randomAlphaNumeric(5));
     }
 
     public int clean(Path dir) {
@@ -36,8 +36,6 @@ public class FileCleaner extends PredicateNode<Path> implements Callable<Integer
                           logger.info(e.getMessage());
                       }
                   });
-//            System.out.println("** Cleaner: " + count[0] + " Files has been Cleaned.");
-//            logger.info("** Cleaner: " + count[0] + " Files has been Cleaned.");
         } catch (IOException e) {
             System.out.println(e.getMessage());
             logger.info(e.getMessage());

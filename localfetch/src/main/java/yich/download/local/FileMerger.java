@@ -103,31 +103,10 @@ public class FileMerger implements Callable<Path> {
 
         if (del || delSrc) {
             FileCleaner cleaner = new FileCleaner();
-            cleaner.addPredicate("Files::isRegularFile", Files::isRegularFile);
+            cleaner.addPredicate(Files::isRegularFile);
             int num = cleaner.clean(src);
             System.out.println("** Merger: " + num + " Source Files has been Cleaned.");
             logger.info("** Merger: " + num + " Source Files has been Cleaned.");
-
-
-//            try (Stream<Path> paths = Files.walk(src)) {
-//                int[] count = {0};
-//                paths
-//                        .filter(Files::isRegularFile)
-//                        .forEach(path -> {
-//                            try {
-//                                Files.deleteIfExists(path);
-//                                count[0]++;
-//                            } catch (IOException e) {
-//                                logger.info(e.getMessage());
-//                            }
-//                        });
-//                System.out.println("** Merger: " + count[0] + " Source Files has been Cleaned.");
-//                logger.info("** Merger: " + count[0] + " Source Files has been Cleaned.");
-//            } catch (IOException e) {
-//                System.out.println(e.getMessage());
-//                logger.info(e.getMessage());
-//            }
-
         }
         return filePath;
     }
