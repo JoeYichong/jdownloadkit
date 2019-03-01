@@ -46,11 +46,15 @@ public class CliLoop {
                 continue;
             }
 
+            if ("clean".equals(strs[0])) {
+                CommandLine.call(new CleanerCommand(), getOpt(strs));
+                continue;
+            }
+
             if ("auto".equals(strs[0])) {
                 new AutoPilot().autoRun();
                 continue;
             }
-
 
             System.out.println("** Error: Command '" + strs[0] + "' doesn't exist!");
         }

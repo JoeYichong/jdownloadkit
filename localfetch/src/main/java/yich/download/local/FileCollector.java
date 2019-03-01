@@ -54,7 +54,8 @@ public class FileCollector implements Callable<List<Path>> {
     }
 
     public FileCollector setSrc(Path src) {
-        Require.argumentWCM(Files.isDirectory(src), "Parameter 'src' isn't a directory path.");
+        Require.argumentWCM(Files.isDirectory(src), "Parameter 'src' value '" +
+                                           src.toString() +"' isn't a directory path.");
         this.src = src;
         return this;
     }
@@ -64,7 +65,8 @@ public class FileCollector implements Callable<List<Path>> {
     }
 
     public FileCollector setDst(Path dst) {
-        Require.argumentWCM(Files.isDirectory(dst), "Parameter 'dst' isn't a directory path.");
+        Require.argumentWCM(Files.isDirectory(dst), "Parameter 'dst' value '" +
+                                           dst.toString() +"' isn't a directory path.");
         this.dst = dst;
         return this;
     }

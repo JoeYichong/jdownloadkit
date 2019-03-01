@@ -20,7 +20,7 @@ public class FileCleaner extends PredicateNode<Path> implements Callable<Integer
     }
 
     public FileCleaner() {
-        super("FileCleaner@" +StrUtil.randomAlphaNumeric(5));
+        super(FileCleaner.class.getName() + "@" +StrUtil.randomAlphaNumeric(5));
     }
 
     public int clean(Path dir) {
