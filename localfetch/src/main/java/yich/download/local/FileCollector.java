@@ -3,7 +3,6 @@ package yich.download.local;
 import yich.base.dbc.Require;
 import yich.base.logging.JUL;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +12,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.function.Predicate;
@@ -29,8 +29,6 @@ public class FileCollector implements Callable<List<Path>> {
 
     private Thread holder;
 
-    private Future future;
-
     private Predicate<Path> formatDetector;
 
     private int waiting_count;
@@ -41,7 +39,6 @@ public class FileCollector implements Callable<List<Path>> {
         this.interval = 5000;
         this.waiting_count = 0;
         this.holder = null;
-        this.future = null;
         this.delSrc = false;
         setSrc(src);
         setDst(dst);
@@ -101,10 +98,6 @@ public class FileCollector implements Callable<List<Path>> {
         return this;
     }
 
-    public Future getFuture() {
-        return future;
-    }
-
     private long creationTime(Path path) {
         try {
             return Files.readAttributes(path, BasicFileAttributes.class)
@@ -156,13 +149,11 @@ public class FileCollector implements Callable<List<Path>> {
                                                         + "' Copied to '" + d_path.toString() + "'");
                         } catch (IOException e) {
                             logger.info(e.getMessage());
-                            //throw new RuntimeException(e);
                         }
                     });
 
         } catch (Exception e) {
             logger.info(e.getMessage());
-            //throw new RuntimeException(e);
         }
         return copied_paths;
     }
@@ -174,15 +165,11 @@ public class FileCollector implements Callable<List<Path>> {
             dst_list.add(getCopiedFiles());
         }
 
-        //System.out.println("%% Start Cleaner");
         FileCleaner cleaner = new FileCleaner();
         cleaner.addPredicate(Files::isRegularFile)
                 .addPredicate(path -> isFormatRight(path))
                 .addPredicate(path -> all || dst_list.get(0).contains(creationTime(path) + ""));
-        int num = cleaner.clean(src);
-        //System.out.println("%% End Cleaning");
-
-        return num;
+        return cleaner.clean(src);
     }
 
     public boolean isRunning() {
@@ -190,11 +177,12 @@ public class FileCollector implements Callable<List<Path>> {
     }
 
     @Override
-    public List<Path> call() throws Exception {
+    public List<Path> call() {
         List<Path> paths = new ArrayList<>();
-        while (isRunning()) {
-            paths.addAll(collect());
-            try {
+        try {
+            while (isRunning() && !this.holder.isInterrupted()) {
+                paths.addAll(collect());
+
                 Thread.sleep(interval);
                 if (waiting_count == 0) {
                     System.out.print("\nWaiting...");
@@ -204,29 +192,30 @@ public class FileCollector implements Callable<List<Path>> {
                     System.out.print("..");
                 }
                 waiting_count ++;
-            } catch (InterruptedException e) {
-                logger.info(e.getMessage());
-                break;
             }
+        } catch (InterruptedException e) {
+            logger.info(e.getMessage());
+        } finally {
+            System.out.println("** Collector has been terminated.");
+            logger.info("** Collector has been terminated.");
+            //System.out.println("%% delSrc: " + delSrc);
+            if (delSrc) {
+                int num = cleanSource(false);
+                System.out.println("** Collector: " + num + " Copied Files has been Cleaned.");
+                logger.info("** Collector: " + num + " Copied Files has been Cleaned.");
+            }
+        }
 
-        }
-        //System.out.println("%% delSrc: " + delSrc);
-        if (delSrc) {
-            int num = cleanSource(false);
-            System.out.println("** Collector: " + num + " Copied Files has been Cleaned.");
-            logger.info("** Collector: " + num + " Copied Files has been Cleaned.");
-        }
         return paths;
     }
 
-    public Thread start() {
+    public Future start() {
         FutureTask task = new FutureTask<>(this);
         this.holder = new Thread(task);
         this.holder.start();
-        this.future = task;
         System.out.println("** Collector has started.");
         logger.info("** Collector has started.");
-        return this.holder;
+        return task;
     }
 
     public void close() {
@@ -234,8 +223,6 @@ public class FileCollector implements Callable<List<Path>> {
             Thread thread = this.holder;
             this.holder = null;
             thread.interrupt();
-            System.out.println("** Collector has been terminated.");
-            logger.info("** Collector has been terminated.");
         }
     }
 

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 public class AutoPilot {
     final public static Logger logger = JUL.getLogger(AutoPilot.class);
 
-    public static void main(String[] args) {
+    public void autoRun() {
         String copy_src = Config.DOWNLOAD.getProperty("dir.copy.source");
         String copy_dst = Config.DOWNLOAD.getProperty("dir.copy.destination");
         String gen_dst = Config.DOWNLOAD.getProperty("dir.gen.destination");
@@ -32,5 +32,9 @@ public class AutoPilot {
         FileMerger fileMerger = new FileMerger(Paths.get(copy_dst), Paths.get(gen_dst));
         fileMerger.merge(true);
 
+    }
+
+    public static void main(String[] args) {
+        new AutoPilot().autoRun();
     }
 }

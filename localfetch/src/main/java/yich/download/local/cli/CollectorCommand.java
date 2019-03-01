@@ -7,9 +7,9 @@ import yich.download.local.TSFileDetector;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.concurrent.Callable;
+import java.util.concurrent.*;
 
-public class CollectorCommand implements Callable<FileCollector> {
+public class CollectorCommand implements Callable<Future> {
     @CommandLine.Option(names = {"-c", "--clean"}, description = "Clean source files")
     boolean delSrc = false;
 
@@ -21,7 +21,7 @@ public class CollectorCommand implements Callable<FileCollector> {
 
 
     @Override
-    public FileCollector call() throws Exception {
+    public Future call() throws Exception {
         String copy_src = Config.DOWNLOAD.getProperty("dir.copy.source");
         String copy_dst = Config.DOWNLOAD.getProperty("dir.copy.destination");
         FileCollector collector = new FileCollector(Paths.get(copy_src), Paths.get(copy_dst));
@@ -33,7 +33,6 @@ public class CollectorCommand implements Callable<FileCollector> {
         if (source != null && Files.isDirectory(Paths.get(source))) {
             collector.setSrc(Paths.get(source));
         }
-        collector.start();
-        return collector;
+        return collector.start();
     }
 }

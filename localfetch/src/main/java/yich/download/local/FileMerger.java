@@ -72,19 +72,19 @@ public class FileMerger implements Callable<Path> {
         try (Stream<Path> paths = Files.walk(src)) {
             List<byte[]> list =
                     paths
-                            .filter(Files::isRegularFile)
-                            .map(path -> {
-                                try {
-                                    ByteArrayOutputStream temp = new ByteArrayOutputStream((int) Files.size(path)); //
-                                    Files.copy(path, temp);
-                                    return temp.toByteArray();
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            })
-                            .collect(Collectors.toList());
-
-            //.forEach(System.out::println);
+                        .filter(Files::isRegularFile)
+                        .map(path -> {
+                             try {
+                                 ByteArrayOutputStream temp = new ByteArrayOutputStream((int) Files.size(path));
+                                 Files.copy(path, temp);
+                                 return temp.toByteArray();
+                             } catch (IOException e) {
+                                 //logger.info(e.getMessage());
+                                 throw new RuntimeException(e);
+                             }
+                        })
+                        .collect(Collectors.toList());
+                        //.forEach(System.out::println);
             if (list.size() > 0 && list.get(0).length > 0) {
                 filePath = (String) new ByteArrayListPreserver()
                                            .setBasePath(dst.toString() + File.separator)
@@ -98,7 +98,8 @@ public class FileMerger implements Callable<Path> {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.info(e.getMessage());
+            return filePath;
         }
 
         if (del || delSrc) {

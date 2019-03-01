@@ -1,10 +1,10 @@
 package yich.download.local.cli;
 
 import picocli.CommandLine;
-import yich.download.local.FileCollector;
 
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.Future;
 
 public class CliLoop {
     private static String shellName = "V-Ex";
@@ -20,17 +20,15 @@ public class CliLoop {
     }
 
     public static void main(String[] args) {
-        FileCollector collector = null;
-        // FileMerger fileMerger = null;
+        Future colFuture = null;
 
         Scanner scanner = new Scanner(System.in);
         String line;
         System.out.print(shellName());
         while(!"exit".equals(line = scanner.nextLine())) {
             if (line.length() == 0) {
-                if (collector != null && collector.isRunning()) {
-                    collector.close();
-                    collector = null;
+                if (colFuture != null && !colFuture.isCancelled() && !colFuture.isDone()) {
+                    colFuture.cancel(true);
                 }
                 System.out.print(shellName());
                 continue;
@@ -39,7 +37,7 @@ public class CliLoop {
             String[] strs = line.split(" ");
 
             if ("collect".equals(strs[0])) {
-                collector = CommandLine.call(new CollectorCommand(), getOpt(strs));
+                colFuture = CommandLine.call(new CollectorCommand(), getOpt(strs));
                 continue;
             }
 
@@ -47,6 +45,12 @@ public class CliLoop {
                 CommandLine.call(new MergerCommand(), getOpt(strs));
                 continue;
             }
+
+            if ("auto".equals(strs[0])) {
+                new AutoPilot().autoRun();
+                continue;
+            }
+
 
             System.out.println("** Error: Command '" + strs[0] + "' doesn't exist!");
         }
