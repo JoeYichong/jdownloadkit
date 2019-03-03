@@ -13,6 +13,10 @@ public class CollectorCommand implements Callable<Future> {
     @CommandLine.Option(names = {"-c", "--clean"}, description = "Clean source files")
     boolean delSrc = false;
 
+    @CommandLine.Option(names = {"--alt"}, description = "using alternative MPEG-TS file detecting method")
+    boolean alter = false;
+
+
     @CommandLine.Option(names = {"-o", "--output"}, description = "Output Directory")
     String output = null;
 
@@ -25,7 +29,7 @@ public class CollectorCommand implements Callable<Future> {
         String copy_src = Config.DOWNLOAD.getProperty("dir.copy.source");
         String copy_dst = Config.DOWNLOAD.getProperty("dir.copy.destination");
         FileCollector collector = new FileCollector(Paths.get(copy_src), Paths.get(copy_dst));
-        collector.setFormatDetector(new TSFileDetector())
+        collector.setFormatDetector(alter ? new TSFileDetector(true) : new TSFileDetector())
                  .setDelSrc(delSrc);
         if (output != null && Files.isDirectory(Paths.get(output))) {
             collector.setDst(Paths.get(output));
