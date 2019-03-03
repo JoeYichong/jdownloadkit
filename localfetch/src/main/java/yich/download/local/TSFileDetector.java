@@ -12,7 +12,7 @@ public class TSFileDetector implements Predicate<Path> {
 
     public TSFileDetector(boolean alter) {
         this.alter = alter;
-        System.out.println("alter: " + this.alter);
+        // System.out.println("alt: " + this.alter);
     }
 
     public boolean isAlter() {

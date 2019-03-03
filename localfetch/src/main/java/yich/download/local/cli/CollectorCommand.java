@@ -16,7 +16,6 @@ public class CollectorCommand implements Callable<Future> {
     @CommandLine.Option(names = {"--alt"}, description = "using alternative MPEG-TS file detecting method")
     boolean alter = false;
 
-
     @CommandLine.Option(names = {"-o", "--output"}, description = "Output Directory")
     String output = null;
 

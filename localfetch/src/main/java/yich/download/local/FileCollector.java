@@ -12,7 +12,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.function.Predicate;
@@ -139,7 +138,10 @@ public class FileCollector implements Callable<List<Path>> {
         try (Stream<Path> paths = Files.walk(src)) {
             paths
                     .filter(Files::isRegularFile)
-                    .filter(path -> isFormatRight(path))
+                    .filter(path -> {
+//                        System.out.println("** Check File: '" + path.toString() + "'");
+                        return isFormatRight(path);
+                    })
                     .filter(path -> !dst_list.contains(creationTime(path) + ""))
                     .forEach(path -> {
                         try {

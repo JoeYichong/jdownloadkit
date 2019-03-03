@@ -52,7 +52,7 @@ public class CliLoop {
             }
 
             if ("auto".equals(strs[0])) {
-                new AutoPilot().autoRun();
+                CommandLine.call(new AutoCommand(), getOpt(strs));
                 continue;
             }
 
