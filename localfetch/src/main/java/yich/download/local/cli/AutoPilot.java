@@ -19,7 +19,9 @@ public class AutoPilot {
 
     private boolean delCollected = false;
 
-    private String tag = "";
+    private String tag = null;
+
+    private String suffix = null;
 
     private String output = null;
 
@@ -61,6 +63,15 @@ public class AutoPilot {
         return this;
     }
 
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public AutoPilot setSuffix(String suffix) {
+        this.suffix = suffix;
+        return this;
+    }
+
     public String getOutput() {
         return output;
     }
@@ -85,26 +96,20 @@ public class AutoPilot {
         String gen_dst = Config.DOWNLOAD.getProperty("dir.gen.destination");
 
         FileCollector collector = new FileCollector(Paths.get(copy_src), Paths.get(copy_dst));
-        collector
-                .setFormatDetector(new TSFileDetector(alt))
-                .setDelSrc(delCached)
-                .start();
+        collector.setFormatDetector(new TSFileDetector(alt))
+                 .setDelSrc(delCached)
+                 .start();
 
         System.out.println("Press enter to quit Collecting...");
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
         collector.close();
 
-        FileMerger fileMerger = new FileMerger(Paths.get(copy_dst), Paths.get(gen_dst));
-        if (output != null) {
-            Path path = Paths.get(output);
-            if (Files.isDirectory(path)) {
-                fileMerger.setDst(path);
-            }
-        }
-        return fileMerger
-                .setTag(tag)
-                .merge(delCollected);
+        return new FileMerger(Paths.get(copy_dst), Paths.get(gen_dst))
+                    .setDst(output)
+                    .setTag(tag)
+                    .setSuffix(suffix)
+                    .merge(delCollected);
     }
 
 }

@@ -9,6 +9,7 @@ import yich.download.local.FileCleaner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CleanerCommand implements Callable<Integer> {
@@ -28,17 +29,23 @@ public class CleanerCommand implements Callable<Integer> {
         int num, acc = 0;
         FileCleaner cleaner = new FileCleaner();
         cleaner.addPredicate(Files::isRegularFile);
-        if (delCache || delAll) {
-            num = cleaner.clean(Paths.get(Config.DOWNLOAD.getProperty("dir.copy.source")));
-            acc += num;
-            System.out.println("** Cleaner: " + num + " Cached Files has been Cleaned.");
-            logger.info("** Cleaner: " + num + " Cached Files has been Cleaned.");
-        }
-        if (delCollected || delAll) {
-            num = cleaner.clean(Paths.get(Config.DOWNLOAD.getProperty("dir.copy.destination")));
-            acc += num;
-            System.out.println("** Cleaner: " + num + " Collected Files has been Cleaned.");
-            logger.info("** Cleaner: " + num + " Collected Files has been Cleaned.");
+        try {
+            if (delCache || delAll) {
+                num = cleaner.clean(Paths.get(Config.DOWNLOAD.getProperty("dir.copy.source")));
+                acc += num;
+                System.out.println("** Cleaner: " + num + " Cached Files has been Cleaned.");
+                logger.info("** Cleaner: " + num + " Cached Files has been Cleaned.");
+            }
+            if (delCollected || delAll) {
+                num = cleaner.clean(Paths.get(Config.DOWNLOAD.getProperty("dir.copy.destination")));
+                acc += num;
+                System.out.println("** Cleaner: " + num + " Collected Files has been Cleaned.");
+                logger.info("** Cleaner: " + num + " Collected Files has been Cleaned.");
+            }
+        } catch (Exception e) {
+            System.out.println("** Error: " + e.getMessage());
+            logger.log(Level.SEVERE, "** Error: " + e.getMessage());
+            return null;
         }
         return acc;
     }

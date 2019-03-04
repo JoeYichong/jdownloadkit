@@ -1,16 +1,20 @@
 package yich.download.local.cli;
 
 import picocli.CommandLine;
+import yich.base.logging.JUL;
 import yich.download.local.Config;
 import yich.download.local.FileCollector;
 import yich.download.local.TSFileDetector;
 
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CollectorCommand implements Callable<Future> {
-    @CommandLine.Option(names = {"-c", "--clean"}, description = "Clean source files")
+    final public static Logger logger = JUL.getLogger(CollectorCommand.class);
+
+    @CommandLine.Option(names = {"-c", "--clean"}, description = "Clean input files")
     boolean delSrc = false;
 
     @CommandLine.Option(names = {"--alt"}, description = "using alternative MPEG-TS file detecting method")
@@ -19,23 +23,26 @@ public class CollectorCommand implements Callable<Future> {
     @CommandLine.Option(names = {"-o", "--output"}, description = "Output Directory")
     String output = null;
 
-    @CommandLine.Option(names = {"-s", "--source"}, description = "Source Directory")
-    String source = null;
+    @CommandLine.Option(names = {"-i", "--input"}, description = "Input Directory")
+    String input = null;
 
 
     @Override
-    public Future call() throws Exception {
+    public Future call() {
         String copy_src = Config.DOWNLOAD.getProperty("dir.copy.source");
         String copy_dst = Config.DOWNLOAD.getProperty("dir.copy.destination");
-        FileCollector collector = new FileCollector(Paths.get(copy_src), Paths.get(copy_dst));
-        collector.setFormatDetector(alter ? new TSFileDetector(true) : new TSFileDetector())
-                 .setDelSrc(delSrc);
-        if (output != null && Files.isDirectory(Paths.get(output))) {
-            collector.setDst(Paths.get(output));
+        try {
+            return new FileCollector(Paths.get(copy_src), Paths.get(copy_dst))
+                    .setFormatDetector(alter ? new TSFileDetector(true) : new TSFileDetector())
+                    .setDelSrc(delSrc)
+                    .setSrc(input)
+                    .setDst(output)
+                    .start();
+        } catch (Exception e) {
+            System.out.println("** Error: " + e.getMessage());
+            logger.log(Level.SEVERE, "** Error: " + e.getMessage());
+            return null;
         }
-        if (source != null && Files.isDirectory(Paths.get(source))) {
-            collector.setSrc(Paths.get(source));
-        }
-        return collector.start();
+
     }
 }

@@ -21,12 +21,15 @@ public class FileMerger implements Callable<Path> {
 
     private String tag;
 
+    private String suffix;
+
     private boolean delSrc = false;
 
     public FileMerger(Path src, Path dst) {
         setSrc(src);
         setDst(dst);
         this.tag = "";
+        this.suffix = "ts";
     }
 
     public Path getSrc() {
@@ -34,8 +37,16 @@ public class FileMerger implements Callable<Path> {
     }
 
     public FileMerger setSrc(Path src) {
-        Require.argumentWCM(Files.isDirectory(src), "Parameter 'src' isn't a directory path.");
+        Require.argumentWCM(Files.isDirectory(src), "Parameter 'src' value '" +
+                src.toString() +"' isn't a directory path.");
         this.src = src;
+        return this;
+    }
+
+    public FileMerger setSrc(String src) {
+        if (src != null) {
+            setSrc(Paths.get(src));
+        }
         return this;
     }
 
@@ -44,8 +55,16 @@ public class FileMerger implements Callable<Path> {
     }
 
     public FileMerger setDst(Path dst) {
-        Require.argumentWCM(Files.isDirectory(dst), "Parameter 'dst' isn't a directory path.");
+        Require.argumentWCM(Files.isDirectory(dst), "Parameter 'dst' value '" +
+                dst.toString() +"' isn't a directory path.");
         this.dst = dst;
+        return this;
+    }
+
+    public FileMerger setDst(String dst) {
+        if (dst != null) {
+            setDst(Paths.get(dst));
+        }
         return this;
     }
 
@@ -63,7 +82,20 @@ public class FileMerger implements Callable<Path> {
     }
 
     public FileMerger setTag(String tag) {
-        this.tag = tag;
+        if (tag != null) {
+            this.tag = tag;
+        }
+        return this;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public FileMerger setSuffix(String suffix) {
+        if (suffix != null) {
+            this.suffix = suffix;
+        }
         return this;
     }
 
@@ -87,9 +119,9 @@ public class FileMerger implements Callable<Path> {
                         //.forEach(System.out::println);
             if (list.size() > 0 && list.get(0).length > 0) {
                 filePath = (String) new ByteArrayListPreserver()
-                                           .setBasePath(dst.toString() + File.separator)
-                                           .setFormat("ts")
-                                           .appendTag(tag)
+                                           .setBasePath(this.dst.toString() + File.separator)
+                                           .setFormat(this.suffix)
+                                           .appendTag(this.tag)
                                            .apply(list);
                 System.out.println("** Data has been Saved to '" + filePath + "'");
             } else {
