@@ -1,7 +1,8 @@
-package yich.download.local.cli;
+package yich.download.local.picocli;
 
 import picocli.CommandLine;
 import yich.base.logging.JUL;
+import yich.download.local.AutoPilot;
 
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;

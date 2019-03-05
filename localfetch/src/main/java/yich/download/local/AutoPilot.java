@@ -1,7 +1,6 @@
-package yich.download.local.cli;
+package yich.download.local;
 
 import yich.base.logging.JUL;
-import yich.download.local.*;
 
 import java.util.Scanner;
 import java.util.logging.Logger;

@@ -1,4 +1,4 @@
-package yich.download.local.cli;
+package yich.download.local.picocli;
 
 import picocli.CommandLine;
 

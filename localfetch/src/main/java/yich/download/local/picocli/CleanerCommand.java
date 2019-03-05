@@ -1,4 +1,4 @@
-package yich.download.local.cli;
+package yich.download.local.picocli;
 
 import picocli.CommandLine;
 import yich.base.logging.JUL;
@@ -7,7 +7,6 @@ import yich.download.local.FileCleaner;
 
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
