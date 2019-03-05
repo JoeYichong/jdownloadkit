@@ -31,13 +31,13 @@ public class CleanerCommand implements Callable<Integer> {
         cleaner.addPredicate(Files::isRegularFile);
         try {
             if (delCache || delAll) {
-                num = cleaner.clean(Paths.get(Config.DOWNLOAD.getProperty("dir.copy.source")));
+                num = cleaner.clean(Config.DIR_COPY_FROM);
                 acc += num;
                 System.out.println("** Cleaner: " + num + " Cached Files has been Cleaned.");
                 logger.info("** Cleaner: " + num + " Cached Files has been Cleaned.");
             }
             if (delCollected || delAll) {
-                num = cleaner.clean(Paths.get(Config.DOWNLOAD.getProperty("dir.copy.destination")));
+                num = cleaner.clean(Config.DIR_COPY_TO);
                 acc += num;
                 System.out.println("** Cleaner: " + num + " Collected Files has been Cleaned.");
                 logger.info("** Cleaner: " + num + " Collected Files has been Cleaned.");

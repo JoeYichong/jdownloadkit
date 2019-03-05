@@ -28,7 +28,7 @@ public class FileCollector implements Callable<List<Path>> {
 
     private Thread holder;
 
-    private Predicate<Path> formatDetector;
+    private Predicate<Path> fileDetector;
 
     private int waiting_count;
 
@@ -94,13 +94,14 @@ public class FileCollector implements Callable<List<Path>> {
         return this;
     }
 
-    public Predicate<Path> getFormatDetector() {
-        return formatDetector;
+    public Predicate<Path> getFileDetector() {
+        return fileDetector;
     }
 
-    public FileCollector setFormatDetector(Predicate<Path> formatDetector) {
-        Require.argumentNotNull(formatDetector);
-        this.formatDetector = formatDetector;
+    public FileCollector setFileDetector(Predicate<Path> fileDetector) {
+        if (fileDetector != null) {
+            this.fileDetector = fileDetector;
+        }
         return this;
     }
 
@@ -138,11 +139,11 @@ public class FileCollector implements Callable<List<Path>> {
     }
 
     protected boolean isFormatRight(Path path) {
-        if (formatDetector == null) {
+        if (fileDetector == null) {
             return false;
         }
         else {
-            return formatDetector.test(path);
+            return fileDetector.test(path);
         }
     }
 

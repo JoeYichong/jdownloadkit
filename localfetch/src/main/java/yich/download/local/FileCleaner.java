@@ -71,14 +71,14 @@ public class FileCleaner extends PredicateNode<Path> implements Callable<Integer
                               Files.deleteIfExists(path);
                               count[0]++;
                          } catch (IOException e) {
-                              System.out.println(e.getMessage());
-                              logger.info(e.getMessage());
+//                              System.out.println("** Fail to delete: " + e.getMessage());
+//                              logger.info("** Fail to delete: " + e.getMessage());
                          }
                       });
             }
 
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("** IOException: " + e.getMessage());
             logger.info(e.getMessage());
         }
         return count[0];

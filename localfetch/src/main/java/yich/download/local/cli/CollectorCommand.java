@@ -2,11 +2,8 @@ package yich.download.local.cli;
 
 import picocli.CommandLine;
 import yich.base.logging.JUL;
-import yich.download.local.Config;
-import yich.download.local.FileCollector;
-import yich.download.local.TSFileDetector;
+import yich.download.local.*;
 
-import java.nio.file.Paths;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,11 +26,9 @@ public class CollectorCommand implements Callable<Future> {
 
     @Override
     public Future call() {
-        String copy_src = Config.DOWNLOAD.getProperty("dir.copy.source");
-        String copy_dst = Config.DOWNLOAD.getProperty("dir.copy.destination");
         try {
-            return new FileCollector(Paths.get(copy_src), Paths.get(copy_dst))
-                    .setFormatDetector(alter ? new TSFileDetector(true) : new TSFileDetector())
+            return FileCollectors.newFileCollector()
+                    .setFileDetector(alter ? FileDetectors.get("ts2") : null)
                     .setDelSrc(delSrc)
                     .setSrc(input)
                     .setDst(output)

@@ -1,14 +1,8 @@
 package yich.download.local.cli;
 
 import yich.base.logging.JUL;
-import yich.download.local.Config;
-import yich.download.local.FileCollector;
-import yich.download.local.FileMerger;
-import yich.download.local.TSFileDetector;
+import yich.download.local.*;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -17,7 +11,7 @@ public class AutoPilot {
 
     private boolean delCached = false;
 
-    private boolean delCollected = false;
+    private boolean delCollected = true;
 
     private String tag = null;
 
@@ -34,6 +28,10 @@ public class AutoPilot {
     public AutoPilot(boolean delCached, boolean delCollected) {
         this.delCached = delCached;
         this.delCollected = delCollected;
+    }
+
+    public static AutoPilot get() {
+        return new AutoPilot();
     }
 
     public boolean isDelCached() {
@@ -91,12 +89,8 @@ public class AutoPilot {
     }
 
     public String autoRun() {
-        String copy_src = Config.DOWNLOAD.getProperty("dir.copy.source");
-        String copy_dst = Config.DOWNLOAD.getProperty("dir.copy.destination");
-        String gen_dst = Config.DOWNLOAD.getProperty("dir.gen.destination");
-
-        FileCollector collector = new FileCollector(Paths.get(copy_src), Paths.get(copy_dst));
-        collector.setFormatDetector(new TSFileDetector(alt))
+        FileCollector collector = FileCollectors.newFileCollector();
+        collector.setFileDetector(alt ? FileDetectors.get("ts2") : null)
                  .setDelSrc(delCached)
                  .start();
 
@@ -105,11 +99,11 @@ public class AutoPilot {
         scanner.nextLine();
         collector.close();
 
-        return new FileMerger(Paths.get(copy_dst), Paths.get(gen_dst))
-                    .setDst(output)
-                    .setTag(tag)
-                    .setSuffix(suffix)
-                    .merge(delCollected);
+        return  FileMergers.newFileMerger()
+                           .setDst(output)
+                           .setTag(tag)
+                           .setSuffix(suffix)
+                           .merge(delCollected);
     }
 
 }

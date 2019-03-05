@@ -4,7 +4,6 @@ import picocli.CommandLine;
 import yich.base.logging.JUL;
 
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AutoCommand implements Callable<String> {
@@ -35,7 +34,9 @@ public class AutoCommand implements Callable<String> {
     @Override
     public String call() {
         try {
-            return new AutoPilot(delAllSrc || delCached, delAllSrc || delCollected)
+            return AutoPilot.get()
+                    .setDelCached(delAllSrc || delCached)
+                    .setDelCollected(delAllSrc || delCollected)
                     .setAlt(alt)
                     .setOutput(output)
                     .setTag(tag)
@@ -43,7 +44,7 @@ public class AutoCommand implements Callable<String> {
                     .autoRun();
         } catch (Exception e) {
             System.out.println("** Error: " + e.getMessage());
-            logger.log(Level.SEVERE, "** Error: " + e.getMessage());
+            logger.severe("** Error: " + e.getMessage());
             return null;
         }
 
