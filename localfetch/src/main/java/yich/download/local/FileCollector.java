@@ -184,7 +184,7 @@ public class FileCollector implements Callable<List<Path>> {
             dst_list.add(getCopiedFiles());
         }
 
-        FileCleaner cleaner = new FileCleaner();
+        FileCleaner cleaner = FileCleaner.getInstance();
         cleaner.addPredicate(Files::isRegularFile)
                 .addPredicate(path -> isFormatRight(path))
                 .addPredicate(path -> all || dst_list.get(0).contains(creationTime(path) + ""));

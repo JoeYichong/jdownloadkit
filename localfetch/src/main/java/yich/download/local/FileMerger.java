@@ -135,7 +135,7 @@ public class FileMerger implements Callable<Path> {
         }
 
         if (del || delSrc) {
-            FileCleaner cleaner = new FileCleaner();
+            FileCleaner cleaner = FileCleaner.getInstance();
             cleaner.addPredicate(Files::isRegularFile);
             int num = cleaner.clean(src);
             System.out.println("** Merger: " + num + " Source Files has been Cleaned.");

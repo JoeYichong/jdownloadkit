@@ -26,7 +26,7 @@ public class CleanerCommand implements Callable<Integer> {
     @Override
     public Integer call() {
         int num, acc = 0;
-        FileCleaner cleaner = new FileCleaner();
+        FileCleaner cleaner = FileCleaner.getInstance();
         cleaner.addPredicate(Files::isRegularFile);
         try {
             if (delCache || delAll) {
