@@ -15,7 +15,7 @@ public class CollectorCommand implements Callable<Future> {
     boolean delSrc = false;
 
     @CommandLine.Option(names = {"--alt"}, description = "using alternative MPEG-TS file detecting method")
-    boolean alter = false;
+    boolean alt = false;
 
     @CommandLine.Option(names = {"-o", "--output"}, description = "Output Directory")
     String output = null;
@@ -27,12 +27,11 @@ public class CollectorCommand implements Callable<Future> {
     @Override
     public Future call() {
         try {
-            return FileCollectors.newFileCollector()
-                    .setFileDetector(alter ? FileDetectors.get("ts2") : null)
-                    .setDelSrc(delSrc)
-                    .setSrc(input)
-                    .setDst(output)
-                    .start();
+             return FileCollectors.newFileCollector()
+                     .setDelSrc(delSrc)
+                     .setSrc(input)
+                     .setDst(output)
+                     .start(alt);
         } catch (Exception e) {
             System.out.println("** Error: " + e.getMessage());
             logger.log(Level.SEVERE, "** Error: " + e.getMessage());

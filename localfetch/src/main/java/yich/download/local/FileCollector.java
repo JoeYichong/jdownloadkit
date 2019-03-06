@@ -10,10 +10,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -28,17 +31,23 @@ public class FileCollector implements Callable<List<Path>> {
 
     private Thread holder;
 
-    private Predicate<Path> fileDetector;
+    private FileDetector<Path> fileDetector;
 
     private int waiting_count;
 
     private boolean delSrc;
+
+    private AtomicInteger isAlterd;
+
+    private Set<Thread> alterdThreads;
 
     public FileCollector(Path src, Path dst) {
         this.interval = 5000;
         this.waiting_count = 0;
         this.holder = null;
         this.delSrc = false;
+        this.isAlterd = new AtomicInteger(0);
+        alterdThreads = new HashSet<>();
         setSrc(src);
         setDst(dst);
     }
@@ -98,12 +107,17 @@ public class FileCollector implements Callable<List<Path>> {
         return fileDetector;
     }
 
-    public FileCollector setFileDetector(Predicate<Path> fileDetector) {
+    public FileCollector setFileDetector(FileDetector<Path> fileDetector) {
         if (fileDetector != null) {
             this.fileDetector = fileDetector;
         }
         return this;
     }
+
+//    public FileCollector setFileDetector(Predicate<Path> predicate) {
+//        setFileDetector(FileDetector.of(predicate));
+//        return this;
+//    }
 
     public boolean isDelSrc() {
         return delSrc;
@@ -195,10 +209,32 @@ public class FileCollector implements Callable<List<Path>> {
         return this.holder != null;
     }
 
+    private boolean alt() {
+        if (alterdThreads.contains(Thread.currentThread())) {
+            if (isAlterd.incrementAndGet() == 1) {
+                this.fileDetector.alt();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean unAlt() {
+        if (alterdThreads.contains(Thread.currentThread())) {
+            alterdThreads.remove(Thread.currentThread());
+            if (isAlterd.decrementAndGet() == 0) {
+                this.fileDetector.alt(); // alt back
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public List<Path> call() {
         List<Path> paths = new ArrayList<>();
         try {
+            alt();
             while (isRunning() && !this.holder.isInterrupted()) {
                 paths.addAll(collect());
 
@@ -223,18 +259,25 @@ public class FileCollector implements Callable<List<Path>> {
                 System.out.println("** Collector: " + num + " Copied Files has been Cleaned.");
                 logger.info("** Collector: " + num + " Copied Files has been Cleaned.");
             }
+            unAlt();
         }
-
         return paths;
     }
 
-    public Future start() {
+    public Future start(boolean alt) {
         FutureTask task = new FutureTask<>(this);
         this.holder = new Thread(task);
+        if (alt) {
+            alterdThreads.add(this.holder);
+        }
         this.holder.start();
         System.out.println("** Collector has started.");
         logger.info("** Collector has started.");
         return task;
+    }
+
+    public Future start() {
+        return start(false);
     }
 
     public void close() {

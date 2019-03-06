@@ -5,18 +5,16 @@ import org.jcodec.common.JCodecUtil;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.function.Predicate;
 
-public class TSFileDetector implements Predicate<Path> {
-    private boolean alter = false;
+public class TSFileDetector extends FileDetector<Path> {
+    private boolean isTS2 = false;
 
     public TSFileDetector() {
         super();
     }
 
-    public TSFileDetector(boolean alter) {
-        this.alter = alter;
-        // System.out.println("alt: " + this.alter);
+    public TSFileDetector(boolean isTS2) {
+        this.isTS2 = isTS2;
     }
 
     public static boolean isMPEG_TS(Path path) {
@@ -40,17 +38,24 @@ public class TSFileDetector implements Predicate<Path> {
     }
 
 
-    public boolean isAlter() {
-        return alter;
+    public boolean isTS2() {
+        return isTS2;
     }
 
-    public TSFileDetector setAlter(boolean alter) {
-        this.alter = alter;
+    public TSFileDetector setTS2(boolean TS2) {
+        this.isTS2 = TS2;
         return this;
     }
 
     @Override
-    public boolean test(Path path) {
-        return alter ? TSFileDetector.isMPEG_TS_B(path) : TSFileDetector.isMPEG_TS(path);
+    public void alt() {
+        this.isTS2 = !this.isTS2;
+        // System.out.print("<TSFileDetector: " + isTS2 + ">");
     }
+
+    @Override
+    public boolean test(Path path) {
+        return isTS2 ? TSFileDetector.isMPEG_TS_B(path) : TSFileDetector.isMPEG_TS(path);
+    }
+
 }

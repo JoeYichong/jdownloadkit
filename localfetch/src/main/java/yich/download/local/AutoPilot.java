@@ -89,9 +89,8 @@ public class AutoPilot {
 
     public String autoRun() {
         FileCollector collector = FileCollectors.newFileCollector();
-        collector.setFileDetector(alt ? FileDetectors.get("ts2") : null)
-                 .setDelSrc(delCached)
-                 .start();
+        collector.setDelSrc(delCached)
+                 .start(alt);
 
         System.out.println("Press enter to quit Collecting...");
         Scanner scanner = new Scanner(System.in);
