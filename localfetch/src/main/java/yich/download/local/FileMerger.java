@@ -2,7 +2,7 @@ package yich.download.local;
 
 import yich.base.dbc.Require;
 import yich.base.logging.JUL;
-import yich.base.preserver.ByteArrayListPreserver;
+import yich.base.preserver.ByteArrayPreserver;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -25,11 +25,15 @@ public class FileMerger implements Callable<Path> {
 
     private boolean delSrc = false;
 
+    private FileAssembler fileAssembler;
+
     public FileMerger(Path src, Path dst) {
         setSrc(src);
         setDst(dst);
         this.tag = "";
         this.suffix = "ts";
+
+        fileAssembler = new SimpleFileAssembler();
     }
 
     public Path getSrc() {
@@ -99,6 +103,16 @@ public class FileMerger implements Callable<Path> {
         return this;
     }
 
+    public FileAssembler getFileAssembler() {
+        return fileAssembler;
+    }
+
+    public FileMerger setFileAssembler(FileAssembler fileAssembler) {
+        Require.argumentNotNull(fileAssembler);
+        this.fileAssembler = fileAssembler;
+        return this;
+    }
+
     public String merge(boolean del) {
         String filePath = null;
         try (Stream<Path> paths = Files.walk(src)) {
@@ -118,11 +132,11 @@ public class FileMerger implements Callable<Path> {
                         .collect(Collectors.toList());
                         //.forEach(System.out::println);
             if (list.size() > 0 && list.get(0).length > 0) {
-                filePath = (String) new ByteArrayListPreserver()
+                filePath = (String) new ByteArrayPreserver()
                                            .setBasePath(this.dst.toString() + File.separator)
                                            .setFormat(this.suffix)
                                            .appendTag(this.tag)
-                                           .apply(list);
+                                           .apply(fileAssembler.assemble(list));
                 System.out.println("** Data has been Saved to '" + filePath + "'");
             } else {
                 System.out.println("** No Data to Save");
