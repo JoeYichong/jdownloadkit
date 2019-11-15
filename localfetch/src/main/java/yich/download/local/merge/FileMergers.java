@@ -1,4 +1,7 @@
-package yich.download.local;
+package yich.download.local.merge;
+
+import yich.download.local.Config;
+import yich.download.local.merge.FileMerger;
 
 public class FileMergers {
     public static FileMerger newFileMerger() {

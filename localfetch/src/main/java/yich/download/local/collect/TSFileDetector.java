@@ -1,4 +1,4 @@
-package yich.download.local;
+package yich.download.local.collect;
 
 import org.jcodec.common.JCodecUtil;
 
@@ -10,10 +10,12 @@ public class TSFileDetector extends FileDetector<Path> {
     private boolean isTS2 = false;
 
     public TSFileDetector() {
-        super();
+        super("TSFileDetectorNode");
+        this.addPredicate("TSFileDetector", path -> test0(path));
     }
 
     public TSFileDetector(boolean isTS2) {
+        this();
         this.isTS2 = isTS2;
     }
 
@@ -54,7 +56,12 @@ public class TSFileDetector extends FileDetector<Path> {
     }
 
     @Override
-    public boolean test(Path path) {
+    protected String getHint(Path path) {
+        return path.toString();
+    }
+
+//    @Override
+    public boolean test0(Path path) {
         return isTS2 ? TSFileDetector.isMPEG_TS_B(path) : TSFileDetector.isMPEG_TS(path);
     }
 

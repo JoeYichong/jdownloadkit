@@ -1,4 +1,4 @@
-package yich.download.local;
+package yich.download.local.collect;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

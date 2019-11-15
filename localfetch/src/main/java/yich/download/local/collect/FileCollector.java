@@ -1,7 +1,9 @@
-package yich.download.local;
+package yich.download.local.collect;
 
 import yich.base.dbc.Require;
 import yich.base.logging.JUL;
+import yich.base.time.DefaultTimeInflater;
+import yich.download.local.FileCleaner;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,10 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
@@ -55,6 +54,32 @@ public class FileCollector implements Callable<List<Path>> {
     public FileCollector(Path src, Path dst, long interval) {
         this(src, dst);
         setInterval(interval);
+    }
+
+    public FileCollector set(Map<String, String> paras) {
+        if (paras.get("timeAfter") != null || paras.get("timeBefore") != null) {
+            var timePredicate =
+                    new FileCreationTimePredicate("FileCreationTimePredicate", new DefaultTimeInflater());
+            timePredicate.setTime(paras.remove("timeAfter"), paras.remove("timeBefore"));
+            fileDetector.addPredicate(timePredicate);
+        }
+
+        paras.forEach((k, v) -> set0(k, v));
+
+        return this;
+    }
+
+    private void set0(String name, String value) {
+        switch (name) {
+            case "delSrc":
+                this.delSrc = Boolean.parseBoolean(value); break;
+            case "alt": break;
+            case "output":
+                setDst(value); break;
+            case "input":
+                setSrc(value); break;
+        }
+
     }
 
     public Path getSrc() {

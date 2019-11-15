@@ -4,6 +4,7 @@ import yich.base.dbc.Require;
 import yich.base.logging.JUL;
 import yich.base.predicate.PredicateNode;
 import yich.base.util.StrUtil;
+import yich.download.local.collect.FileCollector;
 
 import java.io.IOException;
 import java.nio.file.Files;

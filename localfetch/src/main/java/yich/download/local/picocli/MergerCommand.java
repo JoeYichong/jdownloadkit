@@ -3,7 +3,7 @@ package yich.download.local.picocli;
 import picocli.CommandLine;
 
 import yich.base.logging.JUL;
-import yich.download.local.FileMergers;
+import yich.download.local.merge.FileMergers;
 
 import java.util.concurrent.Callable;
 import java.util.logging.Level;

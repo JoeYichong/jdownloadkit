@@ -1,4 +1,8 @@
-package yich.download.local;
+package yich.download.local.collect;
+
+import yich.download.local.Config;
+import yich.download.local.collect.FileCollector;
+import yich.download.local.collect.FileDetectors;
 
 public class FileCollectors {
     public static FileCollector newFileCollector() {

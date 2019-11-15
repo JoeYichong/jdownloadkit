@@ -1,6 +1,9 @@
 package yich.download.local;
 
 import yich.base.logging.JUL;
+import yich.download.local.collect.FileCollector;
+import yich.download.local.collect.FileCollectors;
+import yich.download.local.merge.FileMergers;
 
 import java.util.Scanner;
 import java.util.logging.Logger;
