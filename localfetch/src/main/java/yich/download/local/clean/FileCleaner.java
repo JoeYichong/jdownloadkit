@@ -1,4 +1,4 @@
-package yich.download.local;
+package yich.download.local.clean;
 
 import yich.base.dbc.Require;
 import yich.base.logging.JUL;

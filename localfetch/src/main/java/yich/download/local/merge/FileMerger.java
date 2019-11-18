@@ -3,7 +3,7 @@ package yich.download.local.merge;
 import yich.base.dbc.Require;
 import yich.base.logging.JUL;
 import yich.base.preserver.ByteArrayPreserver;
-import yich.download.local.FileCleaner;
+import yich.download.local.clean.FileCleaner;
 
 import java.io.*;
 import java.nio.file.Files;

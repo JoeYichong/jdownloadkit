@@ -1,17 +1,14 @@
-package yich.download.local.picocli;
+package yich.download.local.collect;
 
 import picocli.CommandLine;
 import yich.base.logging.JUL;
-import yich.download.local.collect.FileCollectors;
+import yich.download.local.picocli.MyCommand;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CollectorCommand implements Callable<Future> {
+public class CollectorCommand extends MyCommand<Future> {
     final public static Logger logger = JUL.getLogger(CollectorCommand.class);
 
     @CommandLine.Option(names = {"-c", "--clean"}, description = "Clean input files")
@@ -32,37 +29,13 @@ public class CollectorCommand implements Callable<Future> {
     @CommandLine.Option(names = {"-b", "--before"}, description = "Select files created before a specified time")
     String timeBefore = null;
 
-    private String toStr(Object value){
-        return value == null ? null : String.valueOf(value);
-    }
 
-    private Map<String, String> parameters() throws IllegalAccessException {
-        Map<String, String> map = new HashMap<>();
-        Field[] fields = CollectorCommand.class.getDeclaredFields();
-        String value;
-        for (int i = 1; i < fields.length; i++) {
-            fields[i].setAccessible(true);
-            value = toStr(fields[i].get(this));
-            if (value != null) {
-                map.put(fields[i].getName(), value);
-            }
-        }
-//        System.out.println("Hello");
-//        map.forEach((k, v) -> System.out.println(k + ":" + v));
-
-        return map;
-    }
 
     @Override
     public Future call() {
         try {
-             return FileCollectors.newFileCollector()
-                              .set(parameters())
-                              .start();
-//                     .setDelSrc(delSrc)
-//                     .setSrc(input)
-//                     .setDst(output)
-//                     .start(alt);
+             return FileCollectors.newInstance(parameters())
+                                  .start();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("** Error: " + e.getMessage());
@@ -72,5 +45,13 @@ public class CollectorCommand implements Callable<Future> {
 
     }
 
+    @Override
+    protected Class getClassType() {
+        return CollectorCommand.class;
+    }
+
+//    public static void main(String[] args) throws IllegalAccessException {
+//        new CollectorCommand().parameters().forEach((k, v) -> System.out.println(k + ":" + v));
+//    }
 
 }

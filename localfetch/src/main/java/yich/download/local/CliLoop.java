@@ -1,17 +1,17 @@
 package yich.download.local;
 
 import picocli.CommandLine;
-import yich.download.local.picocli.AutoCommand;
-import yich.download.local.picocli.CleanerCommand;
-import yich.download.local.picocli.CollectorCommand;
-import yich.download.local.picocli.MergerCommand;
+import yich.download.local.auto.AutoCommand;
+import yich.download.local.clean.CleanerCommand;
+import yich.download.local.collect.CollectorCommand;
+import yich.download.local.merge.MergerCommand;
 
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.Future;
 
 public class CliLoop {
-    private static String shellName = "V-Ex";
+    private static String shellName = ">>";
 
     private static String[] getOpt(String[] cline) {
         if (cline.length <= 1)

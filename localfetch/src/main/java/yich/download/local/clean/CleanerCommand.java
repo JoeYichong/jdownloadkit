@@ -1,9 +1,8 @@
-package yich.download.local.picocli;
+package yich.download.local.clean;
 
 import picocli.CommandLine;
 import yich.base.logging.JUL;
 import yich.download.local.Config;
-import yich.download.local.FileCleaner;
 
 
 import java.nio.file.Files;

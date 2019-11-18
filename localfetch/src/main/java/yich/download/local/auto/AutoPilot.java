@@ -1,4 +1,4 @@
-package yich.download.local;
+package yich.download.local.auto;
 
 import yich.base.logging.JUL;
 import yich.download.local.collect.FileCollector;
@@ -91,7 +91,7 @@ public class AutoPilot {
     }
 
     public String autoRun() {
-        FileCollector collector = FileCollectors.newFileCollector();
+        FileCollector collector = FileCollectors.newInstance();
         collector.setDelSrc(delCached)
                  .start(alt);
 
@@ -100,7 +100,7 @@ public class AutoPilot {
         scanner.nextLine();
         collector.close();
 
-        return  FileMergers.newFileMerger()
+        return  FileMergers.newInstance()
                            .setDst(output)
                            .setTag(tag)
                            .setSuffix(suffix)

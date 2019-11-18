@@ -2,8 +2,7 @@ package yich.download.local.collect;
 
 import yich.base.dbc.Require;
 import yich.base.logging.JUL;
-import yich.base.time.DefaultTimeInflater;
-import yich.download.local.FileCleaner;
+import yich.download.local.clean.FileCleaner;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class FileCollector implements Callable<List<Path>> {
 
     private Set<Thread> alterdThreads;
 
-    public FileCollector(Path src, Path dst) {
+    public FileCollector(Path src, Path dst, FileDetector<Path> fileDetector) {
         this.interval = 5000;
         this.waiting_count = 0;
         this.holder = null;
@@ -49,37 +48,44 @@ public class FileCollector implements Callable<List<Path>> {
         alterdThreads = new HashSet<>();
         setSrc(src);
         setDst(dst);
+        setFileDetector(fileDetector);
     }
 
-    public FileCollector(Path src, Path dst, long interval) {
-        this(src, dst);
+    public FileCollector(Path src, Path dst, FileDetector<Path> fileDetector, long interval) {
+        this(src, dst, fileDetector);
         setInterval(interval);
     }
 
-    public FileCollector set(Map<String, String> paras) {
-        if (paras.get("timeAfter") != null || paras.get("timeBefore") != null) {
-            var timePredicate =
-                    new FileCreationTimePredicate("FileCreationTimePredicate", new DefaultTimeInflater());
-            timePredicate.setTime(paras.remove("timeAfter"), paras.remove("timeBefore"));
-            fileDetector.addPredicate(timePredicate);
-        }
+//    @Override
+//    public FileCollector setOptions(Map<String, String> paras) {
+//        if (paras.get("timeAfter") != null || paras.get("timeBefore") != null) {
+//            var timePredicate =
+//                    new FileCreationTimePredicate("FileCreationTimePredicate", new DefaultTimeInflater());
+//            timePredicate.setTime(paras.remove("timeAfter"), paras.remove("timeBefore"));
+//            this.getFileDetector().addPredicate(timePredicate);
+//        }
+//        paras.forEach((k, v) -> this.setOptions0(k, v));
+//
+//        return this;
+//    }
+//
+//    private void setOptions0(String name, String value) {
+//        switch (name) {
+//            case "delSrc":
+//                this.setDelSrc(Boolean.parseBoolean(value)); break;
+//            case "alt": break;
+//            case "output":
+//                this.setDst(value); break;
+//            case "input":
+//                this.setSrc(value); break;
+//        }
+//
+//    }
 
-        paras.forEach((k, v) -> set0(k, v));
-
+    public FileCollector addPredicate(Predicate predicate) {
+        Require.argumentNotNull(predicate);
+        fileDetector.addPredicate(predicate);
         return this;
-    }
-
-    private void set0(String name, String value) {
-        switch (name) {
-            case "delSrc":
-                this.delSrc = Boolean.parseBoolean(value); break;
-            case "alt": break;
-            case "output":
-                setDst(value); break;
-            case "input":
-                setSrc(value); break;
-        }
-
     }
 
     public Path getSrc() {
@@ -128,7 +134,7 @@ public class FileCollector implements Callable<List<Path>> {
         return this;
     }
 
-    public Predicate<Path> getFileDetector() {
+    public FileDetector<Path> getFileDetector() {
         return fileDetector;
     }
 
