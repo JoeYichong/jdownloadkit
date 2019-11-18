@@ -30,14 +30,7 @@ public class MergerCommand extends MyCommand<String> {
     @Override
     public String call() {
         try {
-            return FileMergers.newInstance(parameters())
-                              .merge();
-//            return FileMergers.newInstance()
-//                              .setTag(tag)
-//                              .setSuffix(suffix)
-//                              .setSrc(input)
-//                              .setDst(output)
-//                              .merge(delSrc);
+            return FileMergers.newInstance(parameters()).start();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("** Error: " + e.getMessage());
@@ -50,6 +43,7 @@ public class MergerCommand extends MyCommand<String> {
     protected Class getClassType() {
         return MergerCommand.class;
     }
+
 
 //    public static void main(String[] args) throws IllegalAccessException {
 //        new MergerCommand().parameters().forEach((k, v) -> System.out.println(k + ":" + v));

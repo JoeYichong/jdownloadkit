@@ -159,12 +159,12 @@ public class FileMerger implements Callable<Path> {
         return filePath;
     }
 
-    public String merge() {
+    public String start() {
         return merge(false);
     }
 
     @Override
     public Path call() throws Exception {
-        return Paths.get(merge());
+        return Paths.get(start());
     }
 }

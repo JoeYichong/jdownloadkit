@@ -50,6 +50,7 @@ public class CollectorCommand extends MyCommand<Future> {
         return CollectorCommand.class;
     }
 
+
 //    public static void main(String[] args) throws IllegalAccessException {
 //        new CollectorCommand().parameters().forEach((k, v) -> System.out.println(k + ":" + v));
 //    }

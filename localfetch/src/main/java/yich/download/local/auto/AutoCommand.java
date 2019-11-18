@@ -2,11 +2,11 @@ package yich.download.local.auto;
 
 import picocli.CommandLine;
 import yich.base.logging.JUL;
+import yich.download.local.picocli.MyCommand;
 
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-public class AutoCommand implements Callable<String> {
+public class AutoCommand extends MyCommand<String> {
     final public static Logger logger = JUL.getLogger(AutoCommand.class);
 
     @CommandLine.Option(names = {"-c", "--clean"}, description = "Clean all input files")
@@ -48,5 +48,10 @@ public class AutoCommand implements Callable<String> {
             return null;
         }
 
+    }
+
+    @Override
+    protected Class getClassType() {
+        return AutoCommand.class;
     }
 }

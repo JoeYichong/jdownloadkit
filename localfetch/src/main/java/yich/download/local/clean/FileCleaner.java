@@ -4,20 +4,26 @@ import yich.base.dbc.Require;
 import yich.base.logging.JUL;
 import yich.base.predicate.PredicateNode;
 import yich.base.util.StrUtil;
-import yich.download.local.collect.FileCollector;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class FileCleaner extends PredicateNode<Path> {
-    final public static Logger logger = JUL.getLogger(FileCollector.class);
+    final public static Logger logger = JUL.getLogger(FileCleaner.class);
+
+    private List<Path> queue;
 
     private FileCleaner() {
         super(FileCleaner.class.getName() + "@" +StrUtil.randomAlphaNumeric(5));
         this.setCombinerAnd();
+        this.addPredicate(Files::isRegularFile);
+        this.queue = new ArrayList<>();
     }
 
     public static FileCleaner getInstance() {
@@ -30,13 +36,13 @@ public class FileCleaner extends PredicateNode<Path> {
         }
         Require.argumentWCM(Files.isDirectory(dir), "Parameter 'dir' value '" +
                 dir.toString() +"' isn't a valid directory path.");
-        int[] count = {0};
 
+        int[] count = {0};
         synchronized (FileCleaner.class) {
             try {
-                if (Files.isRegularFile(dir)) {
-                    Files.deleteIfExists(dir);
-                }
+//                if (Files.isRegularFile(dir)) {
+//                    Files.deleteIfExists(dir);
+//                }
 
                 try (Stream<Path> paths = Files.walk(dir)) {
                     paths
@@ -60,6 +66,36 @@ public class FileCleaner extends PredicateNode<Path> {
         }
 
         return count[0];
+    }
+
+    public FileCleaner addPath(String path) {
+        this.queue.add(Paths.get(path));
+        return this;
+    }
+
+    public FileCleaner addPath(Path path) {
+        Require.argumentNotNull(path);
+        this.queue.add(path);
+        return this;
+    }
+
+    public void clearPaths() {
+        this.queue.clear();
+    }
+
+    public void removePath(Path path) {
+        this.queue.removeIf(p -> p.toString().equals(path.toString()));
+    }
+
+    public int start() {
+        int[] num = {0}, acc = {0};
+        queue.forEach(path -> {
+            num[0] = clean(path);
+            acc[0] += num[0];
+            System.out.println("** Cleaner: " + num[0] + " Cached Files has been Cleaned.");
+            logger.info("** Cleaner: " + num[0] + " Cached Files has been Cleaned.");
+        });
+        return acc[0];
     }
 
     @Override

@@ -1,6 +1,5 @@
 package yich.download.local;
 
-import picocli.CommandLine;
 import yich.download.local.auto.AutoCommand;
 import yich.download.local.clean.CleanerCommand;
 import yich.download.local.collect.CollectorCommand;
@@ -29,8 +28,10 @@ public class CliLoop {
         Scanner scanner = new Scanner(System.in);
         String line;
         System.out.print(shellName());
+
+        while_loop:
         while(!"exit".equals(line = scanner.nextLine())) {
-            if (line.length() == 0) {
+            if (line.length() == 0) { // press "Enter" to exit "collector" thread
                 if (colFuture != null && !colFuture.isCancelled() && !colFuture.isDone()) {
                     colFuture.cancel(true);
                 }
@@ -40,27 +41,33 @@ public class CliLoop {
 
             String[] strs = line.split(" ");
 
-            if ("collect".equals(strs[0])) {
-                colFuture = CommandLine.call(new CollectorCommand(), getOpt(strs));
-                continue;
+            switch (strs[0]) {
+                case "collect": {
+                    colFuture = new CollectorCommand().call(getOpt(strs));
+                    continue while_loop;
+                }
+
+                case "merge": {
+                    new MergerCommand().call(getOpt(strs));
+                    continue while_loop;
+                }
+
+                case "clean": {
+                    new CleanerCommand().call(getOpt(strs));
+                    continue while_loop;
+                }
+
+                case "auto": {
+                    new AutoCommand().call(getOpt(strs));
+                    continue while_loop;
+                }
+
+                default: {
+                    System.out.println("** Error: Command '" + strs[0] + "' doesn't exist!");
+                }
+
             }
 
-            if ("merge".equals(strs[0])) {
-                CommandLine.call(new MergerCommand(), getOpt(strs));
-                continue;
-            }
-
-            if ("clean".equals(strs[0])) {
-                CommandLine.call(new CleanerCommand(), getOpt(strs));
-                continue;
-            }
-
-            if ("auto".equals(strs[0])) {
-                CommandLine.call(new AutoCommand(), getOpt(strs));
-                continue;
-            }
-
-            System.out.println("** Error: Command '" + strs[0] + "' doesn't exist!");
         }
     }
 }
