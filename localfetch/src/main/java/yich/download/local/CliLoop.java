@@ -1,6 +1,6 @@
 package yich.download.local;
 
-import yich.download.local.auto.AutoCommand;
+import yich.download.local.auto.ExtractorCommand;
 import yich.download.local.clean.CleanerCommand;
 import yich.download.local.collect.CollectorCommand;
 import yich.download.local.merge.MergerCommand;
@@ -57,8 +57,8 @@ public class CliLoop {
                     continue while_loop;
                 }
 
-                case "auto": {
-                    new AutoCommand().call(getOpt(strs));
+                case "extract": {
+                    new ExtractorCommand().call(getOpt(strs));
                     continue while_loop;
                 }
 

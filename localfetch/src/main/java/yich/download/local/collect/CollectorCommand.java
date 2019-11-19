@@ -2,19 +2,19 @@ package yich.download.local.collect;
 
 import picocli.CommandLine;
 import yich.base.logging.JUL;
-import yich.download.local.picocli.MyCommand;
+import yich.download.local.picocli.PicoCommand;
 
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CollectorCommand extends MyCommand<Future> {
+public class CollectorCommand extends PicoCommand<Future> {
     final public static Logger logger = JUL.getLogger(CollectorCommand.class);
 
     @CommandLine.Option(names = {"-c", "--clean"}, description = "Clean input files")
     Boolean delSrc = false;
 
-    @CommandLine.Option(names = {"--alt"}, description = "using alternative MPEG-TS file detecting method")
+    @CommandLine.Option(names = {"--alt"}, description = "using alternative file detecting method")
     Boolean alt = false;
 
     @CommandLine.Option(names = {"-o", "--output"}, description = "Output Directory")
@@ -49,6 +49,11 @@ public class CollectorCommand extends MyCommand<Future> {
     protected Class getClassType() {
         return CollectorCommand.class;
     }
+
+//    @Override
+//    protected Map<String, Map<String, String>> group(Map<String, String> options) {
+//        return null;
+//    }
 
 
 //    public static void main(String[] args) throws IllegalAccessException {

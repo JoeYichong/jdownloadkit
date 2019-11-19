@@ -1,6 +1,7 @@
 package yich.download.local.collect;
 
 import yich.base.predicate.PredicateNode;
+import yich.base.util.StrUtil;
 
 import java.util.function.Predicate;
 
@@ -15,7 +16,7 @@ abstract public class FileDetector<T> extends PredicateNode<T> {
         if (predicate == null) {
             return null;
         }
-        return new FileDetector<T>(null) {
+        return new FileDetector<T>(StrUtil.randomAlphaNumeric(5)) {
             @Override
             protected String getHint(T t) {
                 return null;

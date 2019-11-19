@@ -8,12 +8,14 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 
-abstract public class MyCommand<T> implements Callable<T> {
+abstract public class PicoCommand<T> implements Callable<T> {
     private String toStr(Object value){
         return value == null ? null : String.valueOf(value);
     }
 
     abstract protected Class getClassType();
+
+//    abstract protected Map<String, Map<String, String>> group(Map<String, String> options);
 
     protected Map<String, String> parameters() throws IllegalAccessException {
         Map<String, String> map = new HashMap<>();
@@ -35,6 +37,5 @@ abstract public class MyCommand<T> implements Callable<T> {
     public T call(String[] opts){
         return CommandLine.call(this, opts);
     }
-
 
 }

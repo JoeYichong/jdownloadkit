@@ -3,12 +3,12 @@ package yich.download.local.merge;
 import picocli.CommandLine;
 
 import yich.base.logging.JUL;
-import yich.download.local.picocli.MyCommand;
+import yich.download.local.picocli.PicoCommand;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MergerCommand extends MyCommand<String> {
+public class MergerCommand extends PicoCommand<String> {
     final public static Logger logger = JUL.getLogger(MergerCommand.class);
 
     @CommandLine.Option(names = {"-c", "--clean"}, description = "Clean input files")

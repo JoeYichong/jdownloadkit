@@ -2,6 +2,7 @@ package yich.download.local.merge;
 
 import yich.download.local.Config;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class FileMergers {
@@ -17,11 +18,15 @@ public class FileMergers {
     }
 
     private static FileMerger setOptions(Map<String, String> options, FileMerger merger) {
-        options.forEach((k, v) -> setOptions0(k, v, merger));
+//        options.forEach((k, v) -> setOption(k, v, options, merger));
+        new ArrayList<>(options.entrySet())
+                .forEach(entry -> setOption(entry.getKey(), entry.getValue(), options, merger));
+
+//        System.out.println("FileMergers ->" + options);
         return merger;
     }
 
-    private static void setOptions0(String name, String value, FileMerger merger) {
+    private static void setOption(String name, String value, Map<String, String> options, FileMerger merger) {
         switch (name) {
             case "tag":
                 merger.setTag(value);
@@ -38,6 +43,9 @@ public class FileMergers {
             case "input":
                 merger.setSrc(value);
                 break;
+            default:
+                return;
         }
+        options.remove(name, value);
     }
 }

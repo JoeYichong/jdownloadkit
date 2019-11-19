@@ -2,26 +2,26 @@ package yich.download.local.clean;
 
 import picocli.CommandLine;
 import yich.base.logging.JUL;
-import yich.download.local.picocli.MyCommand;
+import yich.download.local.picocli.PicoCommand;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CleanerCommand extends MyCommand<Integer> {
+public class CleanerCommand extends PicoCommand<Integer> {
     final public static Logger logger = JUL.getLogger(CleanerCommand.class);
 
     @CommandLine.Option(names = {"-ca", "--cached"}, description = "Clean web cached video files")
-    Boolean delCache = false;
+    Boolean delCached = false;
 
     @CommandLine.Option(names = {"-co", "--collected"}, description = "Clean collected video files")
     Boolean delCollected = false;
 
-    @CommandLine.Option(names = {"-a", "--all"}, description = "Clean all cached and collected video files")
-    Boolean delAll = false;
+    @CommandLine.Option(names = {"-c", "--all"}, description = "Clean all cached and collected video files")
+    Boolean delAllSrc = false;
 
     @Override
     public Integer call() {
-        int acc = 0;
+        int acc;
         try {
             acc = FileCleaners.newInstance(parameters()).start();
         } catch (Exception e) {
