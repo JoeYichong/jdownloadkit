@@ -10,9 +10,9 @@ import java.util.logging.Logger;
 public class Config extends PropertyFiles {
     final public static Logger logger = JUL.getLogger(Config.class);
     final public static Item CONFIG = item("_config/config.properties");
-    public static Path DIR_COPY_FROM;
-    public static Path DIR_COPY_TO;
-    public static Path DIR_GEN_TO;
+    public static Path DIR_CACHED;
+    public static Path DIR_COLLECTED;
+    public static Path DIR_GENERATED;
     public static int COLLECTOR_INTERVAL;
     public static boolean COLLECTOR_DEL_SRC;
     public static String FILE_DETECTOR;
@@ -22,9 +22,9 @@ public class Config extends PropertyFiles {
 
     static {
         try {
-            DIR_COPY_FROM = Paths.get(CONFIG.getProperty("dir.copy.source"));
-            DIR_COPY_TO = Paths.get(CONFIG.getProperty("dir.copy.destination"));
-            DIR_GEN_TO = Paths.get(CONFIG.getProperty("dir.gen.destination"));
+            DIR_CACHED = Paths.get(CONFIG.getProperty("dir.cached"));
+            DIR_COLLECTED = Paths.get(CONFIG.getProperty("dir.collected"));
+            DIR_GENERATED = Paths.get(CONFIG.getProperty("dir.generated"));
             COLLECTOR_INTERVAL = Integer.parseInt(CONFIG.getProperty("collector.interval"));
             COLLECTOR_DEL_SRC = Boolean.parseBoolean(CONFIG.getProperty("collector.delSrc"));
             FILE_DETECTOR = CONFIG.getProperty("collector.detector");
@@ -39,9 +39,9 @@ public class Config extends PropertyFiles {
     }
 
     public static void main(String[] args) {
-        System.out.println("DIR_COPY_FROM: " + DIR_COPY_FROM);
-        System.out.println("DIR_COPY_TO: " + DIR_COPY_TO);
-        System.out.println("DIR_GEN_TO: " + DIR_GEN_TO);
+        System.out.println("DIR_CACHED: " + DIR_CACHED);
+        System.out.println("DIR_COLLECTED: " + DIR_COLLECTED);
+        System.out.println("DIR_GENERATED: " + DIR_GENERATED);
         System.out.println("COLLECTOR_INTERVAL: " + COLLECTOR_INTERVAL);
         System.out.println("COLLECTOR_DEL_SRC: " + COLLECTOR_DEL_SRC);
         System.out.println("FILE_DETECTOR: " + FILE_DETECTOR);

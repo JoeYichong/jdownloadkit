@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class FileMergers {
     public static FileMerger newInstance() {
-        return new FileMerger(Config.DIR_COPY_TO, Config.DIR_GEN_TO)
+        return new FileMerger(Config.DIR_COLLECTED, Config.DIR_GENERATED)
                 .setTag(Config.MERGER_TAG)
                 .setSuffix(Config.MERGER_SUFFIX)
                 .setDelSrc(Config.MERGER_DEL_SRC);

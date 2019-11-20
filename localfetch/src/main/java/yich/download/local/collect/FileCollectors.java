@@ -4,13 +4,11 @@ import yich.base.time.DefaultTimeInflater;
 import yich.download.local.Config;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 
 public class FileCollectors {
     public static FileCollector newInstance() {
-        return new FileCollector(Config.DIR_COPY_FROM, Config.DIR_COPY_TO, FileDetectors.get(Config.FILE_DETECTOR))
+        return new FileCollector(Config.DIR_CACHED, Config.DIR_COLLECTED, FileDetectors.get(Config.FILE_DETECTOR))
                      .setInterval(Config.COLLECTOR_INTERVAL)
                      .setDelSrc(Config.COLLECTOR_DEL_SRC);
     }

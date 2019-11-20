@@ -35,14 +35,14 @@ public class FileCleaners {
     private static void setOption(String name, String value, Map<String, String> options, FileCleaner cleaner) {
         switch (name) {
             case "delCached":
-                cleaner.addPath(Config.DIR_COPY_FROM);
+                cleaner.addPath(Config.DIR_CACHED);
                 break;
             case "delCollected":
-                cleaner.addPath(Config.DIR_COPY_TO);
+                cleaner.addPath(Config.DIR_COLLECTED);
                 break;
             case "delAllSrc":
-                cleaner.addPath(Config.DIR_COPY_FROM);
-                cleaner.addPath(Config.DIR_COPY_TO);
+                cleaner.addPath(Config.DIR_CACHED);
+                cleaner.addPath(Config.DIR_COLLECTED);
                 break;
             default:
                 return;
