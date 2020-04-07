@@ -4,7 +4,10 @@
 and reconstructs a single video file. 
 
 ### Quickstart 
-JDK 11 is required to compile this program.
+You require the following to build this application:
+* [OpenJDK 11]: https://openjdk.java.net/projects/jdk/11/
+* [Library Marshmallow]: https://github.com/JoeYichong/marshmallow
+
 
 `config.properties` is the configuration file.
 
